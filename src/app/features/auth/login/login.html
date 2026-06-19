@@ -1,0 +1,75 @@
+<div class="auth-page-wrapper">
+  <div class="blob blob-green"></div>
+  <div class="blob blob-cyan"></div>
+
+  <div class="auth-card">
+    
+    <div class="auth-header">
+      <div class="logo-container">
+        <span class="logo-icon">🌿</span>
+        <h2 class="logo-text">FINCURE</h2>
+      </div>
+      <h1>Sign in to your account</h1>
+      <!-- <p>Welcome back! Please enter your details.</p> -->
+    </div>
+
+    <form [formGroup]="loginForm" (ngSubmit)="onSubmit()" class="auth-form">
+      
+      <div *ngIf="errorMessage()" class="alert-box">
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" class="alert-icon">
+          <path fill-rule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-8-5a.75.75 0 01.75.75v4.5a.75.75 0 01-1.5 0v-4.5A.75.75 0 0110 5zm0 10a1 1 0 100-2 1 1 0 000 2z" clip-rule="evenodd" />
+        </svg>
+        <span>{{ errorMessage() }}</span>
+      </div>
+
+      <div class="input-group">
+        <label for="email">Email</label>
+        <input 
+          id="email" 
+          type="email" 
+          formControlName="email" 
+          placeholder="Enter your email"
+          [class.has-error]="loginForm.get('email')?.invalid && loginForm.get('email')?.touched"
+        />
+        <div class="error-msg" *ngIf="loginForm.get('email')?.invalid && loginForm.get('email')?.touched">
+          Please enter a valid email.
+        </div>
+      </div>
+
+      <div class="input-group">
+        <label for="password">Password</label>
+        <input 
+          id="password" 
+          type="password" 
+          formControlName="password" 
+          placeholder="Enter your password"
+          [class.has-error]="loginForm.get('password')?.invalid && loginForm.get('password')?.touched"
+        />
+        <div class="error-msg" *ngIf="loginForm.get('password')?.invalid && loginForm.get('password')?.touched">
+          Password must be at least 6 characters.
+        </div>
+      </div>
+
+      <div class="form-actions">
+        <!-- <label class="remember-me">
+          <input type="checkbox" />
+          <span>Remember for 30 days</span>
+        </label> -->
+        <a href="#" class="forgot-link">Forgot password?</a>
+      </div>
+
+      <button type="submit" class="submit-btn" [disabled]="isLoading()">
+        <span *ngIf="!isLoading()">Sign In</span>
+        <div *ngIf="isLoading()" class="loader"></div>
+      </button>
+      
+    </form>
+
+   <div class="auth-footer">
+  <p>Don't have an account? 
+   <a routerLink="/register">Sign up</a>
+  </p> 
+
+</div>
+  </div>
+</div>

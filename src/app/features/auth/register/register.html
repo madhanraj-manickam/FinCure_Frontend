@@ -1,0 +1,99 @@
+<div class="auth-page-wrapper">
+  <div class="blob blob-green"></div>
+  <div class="blob blob-cyan"></div>
+
+  <div class="auth-card">
+    
+    <div class="auth-header">
+      <div class="logo-container">
+        <span class="logo-icon">🌿</span>
+        <h2 class="logo-text">FINCURE</h2>
+      </div>
+      <h1>Create an account</h1>
+      <p>Join us to start managing your financial future.</p>
+    </div>
+
+    <form [formGroup]="registerForm" (ngSubmit)="onSubmit()" class="auth-form">
+      
+      <div *ngIf="errorMessage()" class="alert-box alert-error">
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" class="alert-icon">
+          <path fill-rule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-8-5a.75.75 0 01.75.75v4.5a.75.75 0 01-1.5 0v-4.5A.75.75 0 0110 5zm0 10a1 1 0 100-2 1 1 0 000 2z" clip-rule="evenodd" />
+        </svg>
+        <span>{{ errorMessage() }}</span>
+      </div>
+
+      <div *ngIf="successMessage()" class="alert-box alert-success">
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" class="alert-icon">
+          <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.857-9.809a.75.75 0 00-1.214-.882l-3.483 4.79-1.88-1.88a.75.75 0 10-1.06 1.061l2.5 2.5a.75.75 0 001.137-.089l4-5.5z" clip-rule="evenodd" />
+        </svg>
+        <span>{{ successMessage() }}</span>
+      </div>
+
+      <div class="input-group">
+        <label for="userName">Username</label>
+        <input 
+          id="userName" 
+          type="text" 
+          formControlName="userName" 
+          placeholder="Choose a username"
+          [class.has-error]="registerForm.get('userName')?.invalid && registerForm.get('userName')?.touched"
+        />
+        <div class="error-msg" *ngIf="registerForm.get('userName')?.invalid && registerForm.get('userName')?.touched">
+          Username must be at least 3 characters.
+        </div>
+      </div>
+
+      <div class="input-group">
+        <label for="email">Email</label>
+        <input 
+          id="email" 
+          type="email" 
+          formControlName="email" 
+          placeholder="Enter your email"
+          [class.has-error]="registerForm.get('email')?.invalid && registerForm.get('email')?.touched"
+        />
+        <div class="error-msg" *ngIf="registerForm.get('email')?.invalid && registerForm.get('email')?.touched">
+          Please enter a valid email address.
+        </div>
+      </div>
+
+      <div class="input-group">
+        <label for="phoneNumber">Phone Number</label>
+        <input 
+          id="phoneNumber" 
+          type="tel" 
+          formControlName="phoneNumber" 
+          placeholder="e.g. 1234567890"
+          [class.has-error]="registerForm.get('phoneNumber')?.invalid && registerForm.get('phoneNumber')?.touched"
+        />
+        <div class="error-msg" *ngIf="registerForm.get('phoneNumber')?.invalid && registerForm.get('phoneNumber')?.touched">
+          Please enter a valid numeric phone number.
+        </div>
+      </div>
+
+      <div class="input-group">
+        <label for="password">Password</label>
+        <input 
+          id="password" 
+          type="password" 
+          formControlName="password" 
+          placeholder="Create a password"
+          [class.has-error]="registerForm.get('password')?.invalid && registerForm.get('password')?.touched"
+        />
+        <div class="error-msg" *ngIf="registerForm.get('password')?.invalid && registerForm.get('password')?.touched">
+          Password must be at least 6 characters.
+        </div>
+      </div>
+
+      <button type="submit" class="submit-btn" [disabled]="isLoading() || successMessage() !== null">
+        <span *ngIf="!isLoading()">Create Account</span>
+        <div *ngIf="isLoading()" class="loader"></div>
+      </button>
+      
+    </form>
+
+    <div class="auth-footer">
+      <p>Already have an account? <a routerLink="/login">Sign in</a></p>
+    </div>
+  </div>
+</div>
