@@ -1,0 +1,106 @@
+<div class="page-header">
+  <h1>Income Management</h1>
+  <p>Track and manage your incoming cash flow.</p>
+</div>
+
+<div class="dashboard-grid">
+  
+  <div class="form-section">
+    <div class="card form-card">
+      <h2>Add New Income</h2>
+      <p class="subtitle">Enter the details of your recent earnings.</p>
+
+      <form [formGroup]="incomeForm" (ngSubmit)="onSubmit()" class="data-form">
+        
+        <div class="input-group">
+          <label for="amount">Amount </label>
+          <div class="amount-wrapper">
+            <span class="currency-symbol"></span>
+            <input 
+              id="amount" 
+              type="number" 
+              formControlName="amount" 
+              placeholder="0.00"
+              [class.has-error]="incomeForm.get('amount')?.invalid && incomeForm.get('amount')?.touched"
+            />
+          </div>
+          <div class="error-msg" *ngIf="incomeForm.get('amount')?.invalid && incomeForm.get('amount')?.touched">
+            Please enter a valid amount.
+          </div>
+        </div>
+
+        <div class="input-group">
+          <label for="category">Category</label>
+          <select 
+            id="category" 
+            formControlName="category"
+            [class.has-error]="incomeForm.get('category')?.invalid && incomeForm.get('category')?.touched"
+          >
+            <option value="" disabled selected>Select a category</option>
+            <option *ngFor="let cat of categories" [value]="cat">{{ cat }}</option>
+          </select>
+          <div class="error-msg" *ngIf="incomeForm.get('category')?.invalid && incomeForm.get('category')?.touched">
+            Category is required.
+          </div>
+        </div>
+
+        <button type="submit" class="submit-btn" [disabled]="isSubmitting()">
+          <span *ngIf="!isSubmitting()">+ Add Income</span>
+          <div *ngIf="isSubmitting()" class="loader"></div>
+        </button>
+
+      </form>
+    </div>
+  </div>
+
+  <div class="table-section">
+    <div class="card table-card">
+      <div class="table-header">
+        <h2>Recent Incomes</h2>
+        <span class="badge">{{ incomeService.incomes().length }} Records</span>
+      </div>
+
+      <div class="loading-state" *ngIf="incomeService.isLoading()">
+        <div class="loader-dark"></div>
+        <p>Loading records...</p>
+      </div>
+
+      <div class="empty-state" *ngIf="!incomeService.isLoading() && incomeService.incomes().length === 0">
+        <span class="empty-icon">🧾</span>
+        <h3>No income recorded</h3>
+        <p>Your income history will appear here once you add a record.</p>
+      </div>
+
+      <div class="table-container" *ngIf="!incomeService.isLoading() && incomeService.incomes().length > 0">
+        <table class="data-table">
+          <thead>
+            <tr>
+              <th>Date</th>
+              <th>Category</th>
+              <th class="text-right">Amount</th>
+              <th class="text-center">Action</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr *ngFor="let item of incomeService.incomes()">
+              <td>{{ item.date | date:'mediumDate' }}</td>
+              <td>
+                <span class="category-pill">{{ item.category }}</span>
+              </td>
+              <td class="text-right amount-text">+${{ item.amount | number:'1.2-2' }}</td>
+              <td class="text-center">
+                <button class="delete-btn" (click)="deleteRecord(item.id)" title="Delete Record">
+                  <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor">
+                    <path stroke-linecap="round" stroke-linejoin="round" d="M14.74 9l-.346 9m-4.788 0L9.26 9m9.968-3.21c.342.052.682.107 1.022.166m-1.022-.165L18.16 19.673a2.25 2.25 0 01-2.244 2.077H8.084a2.25 2.25 0 01-2.244-2.077L4.772 5.79m14.456 0a48.108 48.108 0 00-3.478-.397m-12 .562c.34-.059.68-.114 1.022-.165m0 0a48.11 48.11 0 013.478-.397m7.5 0v-.916c0-1.18-.91-2.164-2.09-2.201a51.964 51.964 0 00-3.32 0c-1.18.037-2.09 1.022-2.09 2.201v.916m7.5 0a48.667 48.667 0 00-7.5 0" />
+                  </svg>
+                </button>
+              </td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+
+    </div>
+  </div>
+
+</div>
