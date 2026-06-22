@@ -1,0 +1,144 @@
+<div class="page-header">
+  <h1>Investment Portfolio</h1>
+  <p>Track your assets and build long-term wealth.</p>
+</div>
+
+<div class="dashboard-grid">
+  
+  <div class="form-section">
+    <div class="card form-card">
+      <h2>New Asset</h2>
+      <p class="subtitle">Add a new investment to your portfolio.</p>
+
+      <form [formGroup]="investmentForm" (ngSubmit)="onSubmit()" class="data-form">
+        
+        <div class="input-group">
+          <label for="investmentName">Asset Name / Ticker</label>
+          <input 
+            id="investmentName" 
+            type="text" 
+            formControlName="investmentName" 
+            placeholder="e.g., Apple Inc. (AAPL)"
+            [class.has-error]="investmentForm.get('investmentName')?.invalid && investmentForm.get('investmentName')?.touched"
+          />
+        </div>
+
+        <div class="input-group">
+          <label for="investmentType">Asset Class</label>
+          <select 
+            id="investmentType" 
+            formControlName="investmentType"
+            [class.has-error]="investmentForm.get('investmentType')?.invalid && investmentForm.get('investmentType')?.touched"
+          >
+            <option value="" disabled selected>Select an asset class</option>
+            <option *ngFor="let cat of categories" [value]="cat">{{ cat }}</option>
+          </select>
+        </div>
+
+        <div class="input-group">
+          <label for="amountInvested">Amount Invested ($)</label>
+          <div class="amount-wrapper">
+            <span class="currency-symbol">$</span>
+            <input 
+              id="amountInvested" 
+              type="number" 
+              formControlName="amountInvested" 
+              placeholder="0.00"
+              [class.has-error]="investmentForm.get('amountInvested')?.invalid && investmentForm.get('amountInvested')?.touched"
+            />
+          </div>
+        </div>
+
+        <div class="input-group">
+          <label for="startDate">Purchase Date</label>
+          <input 
+            id="startDate" 
+            type="date" 
+            formControlName="startDate" 
+            [class.has-error]="investmentForm.get('startDate')?.invalid && investmentForm.get('startDate')?.touched"
+          />
+        </div>
+
+        <div class="input-group">
+          <label for="notes">Notes (Optional)</label>
+          <input 
+            id="notes" 
+            type="text" 
+            formControlName="notes" 
+            placeholder="e.g., Bought via Vanguard"
+          />
+        </div>
+
+        <button type="submit" class="submit-btn" [disabled]="isSubmitting()">
+          <span *ngIf="!isSubmitting()">+ Add Investment</span>
+          <div *ngIf="isSubmitting()" class="loader"></div>
+        </button>
+
+      </form>
+    </div>
+  </div>
+
+  <div class="table-section">
+    
+    <div class="portfolio-summary-card">
+      <div class="summary-content">
+        <span class="summary-label">Total Portfolio Value</span>
+        <h2 class="summary-value">${{ investmentService.totalPortfolioValue() | number:'1.2-2' }}</h2>
+      </div>
+      <div class="summary-icon">🏦</div>
+    </div>
+
+    <div class="card table-card mt-4">
+      <div class="table-header">
+        <h2>Your Assets</h2>
+        <span class="badge">{{ investmentService.investments().length }} Assets</span>
+      </div>
+
+      <div class="loading-state" *ngIf="investmentService.isLoading()">
+        <div class="loader-dark"></div>
+        <p>Loading portfolio...</p>
+      </div>
+
+      <div class="empty-state" *ngIf="!investmentService.isLoading() && investmentService.investments().length === 0">
+        <span class="empty-icon">📈</span>
+        <h3>No investments yet</h3>
+        <p>Start building your wealth by adding your first asset.</p>
+      </div>
+
+      <div class="table-container" *ngIf="!investmentService.isLoading() && investmentService.investments().length > 0">
+        <table class="data-table">
+          <thead>
+            <tr>
+              <th>Asset Details</th>
+              <th>Date Acquired</th>
+              <th class="text-right">Invested</th>
+              <th class="text-center">Action</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr *ngFor="let item of investmentService.investments()">
+              <td>
+                <div class="details-col">
+                  <span class="asset-name">{{ item.investmentName }}</span>
+                  <span class="category-pill">{{ item.investmentType }}</span>
+                  <span class="description-text" *ngIf="item.notes">{{ item.notes }}</span>
+                </div>
+              </td>
+              <td class="date-col">{{ item.startDate | date:'MMM d, y' }}</td>
+              <td class="text-right amount-text investment-amount">${{ item.amountInvested | number:'1.2-2' }}</td>
+              <td class="text-center">
+                <button class="delete-btn" (click)="deleteRecord(item.investmentId)" title="Remove Asset">
+                  <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor">
+                    <path stroke-linecap="round" stroke-linejoin="round" d="M14.74 9l-.346 9m-4.788 0L9.26 9m9.968-3.21c.342.052.682.107 1.022.166m-1.022-.165L18.16 19.673a2.25 2.25 0 01-2.244 2.077H8.084a2.25 2.25 0 01-2.244-2.077L4.772 5.79m14.456 0a48.108 48.108 0 00-3.478-.397m-12 .562c.34-.059.68-.114 1.022-.165m0 0a48.11 48.11 0 013.478-.397m7.5 0v-.916c0-1.18-.91-2.164-2.09-2.201a51.964 51.964 0 00-3.32 0c-1.18.037-2.09 1.022-2.09 2.201v.916m7.5 0a48.667 48.667 0 00-7.5 0" />
+                  </svg>
+                </button>
+              </td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+
+    </div>
+  </div>
+
+</div>

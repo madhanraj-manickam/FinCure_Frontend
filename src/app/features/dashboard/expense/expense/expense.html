@@ -1,16 +1,16 @@
 <div class="page-header">
-  <h1>Income Management</h1>
-  <p>Track and manage your incoming cash flow.</p>
+  <h1>Expense Tracking</h1>
+  <p>Monitor your spending to stay on budget.</p>
 </div>
 
 <div class="dashboard-grid">
   
   <div class="form-section">
     <div class="card form-card">
-      <h2>Add New Income</h2>
-      <p class="subtitle">Enter the details of your recent earnings.</p>
+      <h2>Add New Expense</h2>
+      <p class="subtitle">Record your recent transactions.</p>
 
-      <form [formGroup]="incomeForm" (ngSubmit)="onSubmit()" class="data-form">
+      <form [formGroup]="expenseForm" (ngSubmit)="onSubmit()" class="data-form">
         
         <div class="input-group">
           <label for="amount">Amount </label>
@@ -21,10 +21,10 @@
               type="number" 
               formControlName="amount" 
               placeholder="0.00"
-              [class.has-error]="incomeForm.get('amount')?.invalid && incomeForm.get('amount')?.touched"
+              [class.has-error]="expenseForm.get('amount')?.invalid && expenseForm.get('amount')?.touched"
             />
           </div>
-          <div class="error-msg" *ngIf="incomeForm.get('amount')?.invalid && incomeForm.get('amount')?.touched">
+          <div class="error-msg" *ngIf="expenseForm.get('amount')?.invalid && expenseForm.get('amount')?.touched">
             Please enter a valid amount.
           </div>
         </div>
@@ -34,18 +34,28 @@
           <select 
             id="category" 
             formControlName="category"
-            [class.has-error]="incomeForm.get('category')?.invalid && incomeForm.get('category')?.touched"
+            [class.has-error]="expenseForm.get('category')?.invalid && expenseForm.get('category')?.touched"
           >
             <option value="" disabled selected>Select a category</option>
             <option *ngFor="let cat of categories" [value]="cat">{{ cat }}</option>
           </select>
-          <div class="error-msg" *ngIf="incomeForm.get('category')?.invalid && incomeForm.get('category')?.touched">
+          <div class="error-msg" *ngIf="expenseForm.get('category')?.invalid && expenseForm.get('category')?.touched">
             Category is required.
           </div>
         </div>
 
+        <div class="input-group">
+          <label for="description">Description (Optional)</label>
+          <input 
+            id="description" 
+            type="text" 
+            formControlName="description" 
+            placeholder="e.g., Grocery shopping at Target"
+          />
+        </div>
+
         <button type="submit" class="submit-btn" [disabled]="isSubmitting()">
-          <span *ngIf="!isSubmitting()">+ Add Income</span>
+          <span *ngIf="!isSubmitting()">Add Expense</span>
           <div *ngIf="isSubmitting()" class="loader"></div>
         </button>
 
@@ -56,38 +66,41 @@
   <div class="table-section">
     <div class="card table-card">
       <div class="table-header">
-        <h2>Recent Incomes</h2>
-        <span class="badge">{{ incomeService.incomes().length }} Records</span>
+        <h2>Recent Expenses</h2>
+        <span class="badge">{{ expenseService.expenses().length }} Records</span>
       </div>
 
-      <div class="loading-state" *ngIf="incomeService.isLoading()">
+      <div class="loading-state" *ngIf="expenseService.isLoading()">
         <div class="loader-dark"></div>
         <p>Loading records...</p>
       </div>
 
-      <div class="empty-state" *ngIf="!incomeService.isLoading() && incomeService.incomes().length === 0">
-        <span class="empty-icon">🧾</span>
-        <h3>No income recorded</h3>
-        <p>Your income history will appear here once you add a record.</p>
+      <div class="empty-state" *ngIf="!expenseService.isLoading() && expenseService.expenses().length === 0">
+        <span class="empty-icon">💳</span>
+        <h3>No expenses recorded</h3>
+        <p>Your spending history will appear here once you add a record.</p>
       </div>
 
-      <div class="table-container" *ngIf="!incomeService.isLoading() && incomeService.incomes().length > 0">
+      <div class="table-container" *ngIf="!expenseService.isLoading() && expenseService.expenses().length > 0">
         <table class="data-table">
           <thead>
             <tr>
               <th>Date</th>
-              <th>Category</th>
+              <th>Details</th>
               <th class="text-right">Amount</th>
               <th class="text-center">Action</th>
             </tr>
           </thead>
           <tbody>
-            <tr *ngFor="let item of incomeService.incomes()">
-              <td>{{ item.date | date:'mediumDate' }}</td>
+            <tr *ngFor="let item of expenseService.expenses()">
+              <td class="date-col">{{ item.date | date:'MMM d, y' }}</td>
               <td>
-                <span class="category-pill">{{ item.category }}</span>
+                <div class="details-col">
+                  <span class="category-pill">{{ item.category }}</span>
+                  <span class="description-text" *ngIf="item.description">{{ item.description }}</span>
+                </div>
               </td>
-              <td class="text-right amount-text">{{item.amount | number:'1.2-2' }}</td>
+              <td class="text-right amount-text expense-amount">{{ item.amount | number:'1.2-2' }}</td>
               <td class="text-center">
                 <button class="delete-btn" (click)="deleteRecord(item.id)" title="Delete Record">
                   <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor">

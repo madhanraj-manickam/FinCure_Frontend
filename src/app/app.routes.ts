@@ -16,6 +16,11 @@ export const routes: Routes = [
       // Later we will add:
     { path: 'incomes', loadComponent: () => import('./features/dashboard/income/income/income').then(m => m.Income) },
       // { path: 'expenses', ... },
+      { path: 'expenses', loadComponent: () => import('./features/dashboard/expense/expense/expense').then(m => m.Expense) },
+
+      { path: 'investments', loadComponent: () => import('./features/dashboard/investment/investment/investment').then(m => m.Investment) },
+
+      { path: 'recommendations', loadComponent: () => import('./features/dashboard/recommendation/recommendation/recommendation').then(m => m.Recommendation) },
       
       // Default to overview when visiting /dashboard
       { path: '', redirectTo: 'overview', pathMatch: 'full' }
