@@ -17,7 +17,8 @@ export class Income implements OnInit {
 
   incomeForm = this.fb.nonNullable.group({
     amount: ['', [Validators.required, Validators.min(1)]],
-    category: ['', Validators.required]
+    category: ['', Validators.required],
+    date: [new Date().toISOString().substring(0, 10), Validators.required]
   });
 
   isSubmitting = signal<boolean>(false);
@@ -36,22 +37,35 @@ export class Income implements OnInit {
     }
 
     this.isSubmitting.set(true);
-    
-    // Ensure amount is parsed as a number for the backend DTO
     const formValue = this.incomeForm.getRawValue();
+
+    // PRODUCTION FIX: Construct the payload using the raw date string.
+    // Do NOT use new Date(formValue.date).toISOString() as it triggers the UTC shift.
     const payload = {
-      ...formValue,
-      amount: Number(formValue.amount)
+      amount: Number(formValue.amount),
+      category: formValue.category,
+      
+      
+      
+      // Sends exactly "2026-06-23" to the C# Backend
+      date: formValue.date 
     };
 
     this.incomeService.addIncome(payload).subscribe({
       next: () => {
-        this.incomeForm.reset({ amount: '', category: '' });
+        // Reset form but keep today's date as the default
+        this.incomeForm.reset({ 
+          amount: '', 
+          category: '', 
+         
+        
+          date: new Date().toISOString().substring(0, 10) 
+        });
         this.isSubmitting.set(false);
       },
       error: () => {
         this.isSubmitting.set(false);
-        alert('Failed to add income. Please try again.');
+        alert('Failed to add expense.');
       }
     });
   }

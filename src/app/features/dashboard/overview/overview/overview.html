@@ -1,22 +1,24 @@
 <div class="page-header">
   <h1>Financial Overview</h1>
-  <p>Your current financial standing at a glance.</p>
+  <p>Monitor your unified ledger across different timeframes.</p>
 </div>
 
-<div class="dashboard-loading" *ngIf="savingsService.isLoading()">
+<app-period-selector></app-period-selector>
+
+<div *ngIf="transactionService.isLoading()" class="dashboard-loading">
   <div class="loader-dark"></div>
   <p>Calculating your financial health...</p>
 </div>
 
-<ng-container *ngIf="!savingsService.isLoading() && savingsService.summary() as summary">
+<ng-container *ngIf="!transactionService.isLoading() && transactionService.summaryData() as summary">
   
   <div class="metrics-grid">
     
     <div class="metric-card primary-card">
       <div class="card-icon">💰</div>
       <div class="card-info">
-        <span class="card-label">Total Net Savings</span>
-        <h2 class="card-value">{{ summary.totalSavings | number:'1.2-2' }}</h2>
+        <span class="card-label">Net Balance</span>
+        <h2 class="card-value">${{ summary.netBalance | number:'1.2-2' }}</h2>
       </div>
     </div>
 
@@ -24,7 +26,7 @@
       <div class="card-icon cyan-icon">📈</div>
       <div class="card-info">
         <span class="card-label">Total Income</span>
-        <h2 class="card-value">{{ summary.totalIncome | number:'1.2-2' }}</h2>
+        <h2 class="card-value text-green">${{ summary.totalIncome | number:'1.2-2' }}</h2>
       </div>
     </div>
 
@@ -32,79 +34,12 @@
       <div class="card-icon red-icon">📉</div>
       <div class="card-info">
         <span class="card-label">Total Expenses</span>
-        <h2 class="card-value">{{ summary.totalExpense | number:'1.2-2' }}</h2>
-      </div>
-    </div>
-
-    <div class="metric-card gold-card">
-      <div class="card-icon gold-icon">⚡</div>
-      <div class="card-info">
-        <span class="card-label">Savings Rate</span>
-        <h2 class="card-value">{{ summary.savingsRate | number:'1.1-2' }}%</h2>
-        <div class="progress-bar-container">
-          <div class="progress-bar-fill" [style.width.%]="summary.savingsRate > 100 ? 100 : (summary.savingsRate < 0 ? 0 : summary.savingsRate)"></div>
-        </div>
+        <h2 class="card-value text-red">${{ summary.totalExpense | number:'1.2-2' }}</h2>
       </div>
     </div>
 
   </div>
 
-  <div class="dashboard-bottom-grid">
-    
-    <div class="card activity-card">
-      <div class="card-header">
-        <h2>Recent Activity</h2>
-        <a routerLink="/dashboard/incomes" class="view-all-link">View Details</a>
-      </div>
+  <app-analytics-charts></app-analytics-charts>
 
-      <div class="empty-state" *ngIf="recentActivity().length === 0">
-        <p>No recent activity found. Start adding your incomes and expenses!</p>
-      </div>
-
-      <div class="activity-list" *ngIf="recentActivity().length > 0">
-        <div class="activity-item" *ngFor="let item of recentActivity()">
-          
-          <div class="activity-left">
-            <div class="activity-icon" [ngClass]="item.type">
-              {{ item.type === 'income' ? '↓' : '↑' }}
-            </div>
-            <div class="activity-details">
-              <span class="activity-title">{{ item.title }} - {{ item.category }}</span>
-              <span class="activity-date">{{ item.date | date:'mediumDate' }}</span>
-            </div>
-          </div>
-          
-          <div class="activity-amount" [ngClass]="item.type">
-            {{ item.type === 'income' ? '+' : '-' }} {{ item.amount | number:'1.2-2' }}
-          </div>
-          
-        </div>
-      </div>
-    </div>
-
-    <div class="card actions-card">
-      <div class="card-header">
-        <h2>Quick Actions</h2>
-      </div>
-      <div class="actions-grid">
-        <a routerLink="/dashboard/incomes" class="action-btn action-green">
-          <span class="icon">💵</span>
-          <span>Add Income</span>
-        </a>
-        <a routerLink="/dashboard/expenses" class="action-btn action-red">
-          <span class="icon">💳</span>
-          <span>Record Expense</span>
-        </a>
-        <a routerLink="/dashboard/investments" class="action-btn action-cyan">
-          <span class="icon">🏦</span>
-          <span>New Investment</span>
-        </a>
-        <a routerLink="/dashboard/recommendations" class="action-btn action-gold">
-          <span class="icon">🤖</span>
-          <span>Get AI Insights</span>
-        </a>
-      </div>
-    </div>
-
-  </div>
 </ng-container>

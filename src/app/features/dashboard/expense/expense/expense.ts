@@ -18,7 +18,8 @@ export class Expense implements OnInit {
   expenseForm = this.fb.nonNullable.group({
     amount: ['', [Validators.required, Validators.min(1)]],
     category: ['', Validators.required],
-    description: [''] // Optional field based on your DTO
+    description: [''] ,// Optional field based on your DTO
+    date: [new Date().toISOString().substring(0, 10), Validators.required]
   });
 
   isSubmitting = signal<boolean>(false);
@@ -31,27 +32,41 @@ export class Expense implements OnInit {
   }
 
   onSubmit() {
-    if (this.expenseForm.invalid) {
+   if (this.expenseForm.invalid) {
       this.expenseForm.markAllAsTouched();
       return;
     }
 
     this.isSubmitting.set(true);
-    
     const formValue = this.expenseForm.getRawValue();
+
+    // PRODUCTION FIX: Construct the payload using the raw date string.
+    // Do NOT use new Date(formValue.date).toISOString() as it triggers the UTC shift.
     const payload = {
-      ...formValue,
-      amount: Number(formValue.amount)
+      amount: Number(formValue.amount),
+      category: formValue.category,
+      
+      description: formValue.description,
+      
+      // Sends exactly "2026-06-23" to the C# Backend
+      date: formValue.date 
     };
 
     this.expenseService.addExpense(payload).subscribe({
       next: () => {
-        this.expenseForm.reset({ amount: '', category: '', description: '' });
+        // Reset form but keep today's date as the default
+        this.expenseForm.reset({ 
+          amount: '', 
+          category: '', 
+         
+          description: '',
+          date: new Date().toISOString().substring(0, 10) 
+        });
         this.isSubmitting.set(false);
       },
       error: () => {
         this.isSubmitting.set(false);
-        alert('Failed to add expense. Please try again.');
+        alert('Failed to add expense.');
       }
     });
   }
