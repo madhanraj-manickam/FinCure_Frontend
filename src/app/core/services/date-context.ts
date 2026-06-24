@@ -30,14 +30,14 @@ export class DateContextService {
   }
 
   // Action to change the period
-  setContext(period: PeriodType, start: Date, end: Date, label: string) {
-    this.currentContext.set({
-      startDate: start.toISOString().split('T')[0],
-      endDate: end.toISOString().split('T')[0],
-      period: period,
-      label: label
-    });
-  }
+setContext(period: PeriodType, start: Date, end: Date, label: string) {
+  this.currentContext.set({
+    startDate: this.formatLocalDate(start),
+    endDate: this.formatLocalDate(end),
+    period: period,
+    label: label
+  });
+}
 
   // Helper to initialize the app with "This Month"
   private getDefaultMonthContext(): DateRange {
@@ -46,8 +46,8 @@ export class DateContextService {
     const end = new Date(now.getFullYear(), now.getMonth() + 1, 0); // Last day of month
     
     return {
-      startDate: start.toISOString().split('T')[0],
-      endDate: end.toISOString().split('T')[0],
+      startDate: this.formatLocalDate(start),
+      endDate: this.formatLocalDate(end),
       period: 'monthly',
       label: now.toLocaleString('default', { month: 'long', year: 'numeric' })
     };
