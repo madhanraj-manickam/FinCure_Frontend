@@ -23,7 +23,7 @@ export const routes: Routes = [
       { path: 'recommendations', loadComponent: () => import('./features/dashboard/recommendation/recommendation/recommendation').then(m => m.Recommendation) },
       
       // Default to overview when visiting /dashboard
-      { path: '', redirectTo: 'overview', pathMatch: 'full' }
+    { path: '', redirectTo: 'overview', pathMatch: 'full' }
     ]
   },
 

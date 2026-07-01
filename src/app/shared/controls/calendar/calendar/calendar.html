@@ -1,0 +1,54 @@
+<div class="modal-backdrop" (click)="close.emit()">
+  <div class="modal-content" (click)="$event.stopPropagation()">
+    
+    <div class="modal-header">
+      <div class="header-titles">
+        <h3>Financial Calendar</h3>
+        <p>Select a day to view details</p>
+      </div>
+
+      <div class="month-nav">
+        <button class="nav-btn" (click)="prevMonth()" title="Previous Month">❮</button>
+        <div class="current-date-display">
+          <span class="month-text">{{ monthLabel() }}</span>
+        </div>
+        <button class="nav-btn" (click)="nextMonth()" title="Next Month">❯</button>
+      </div>
+
+      <button class="close-btn" (click)="close.emit()" title="Close">✕</button>
+    </div>
+
+    <div class="loading-bar" *ngIf="transactionService.isLoading()"></div>
+
+    <div class="calendar-grid-header">
+      <div *ngFor="let day of weekDays" class="weekday">{{ day }}</div>
+    </div>
+
+    <div class="calendar-grid">
+      <div class="day-cell" 
+           *ngFor="let cell of calendarGrid()" 
+           [class.empty]="!cell.isCurrentMonth"
+           [class.interactive]="cell.isCurrentMonth"
+           (click)="onSelectDay(cell)">
+        
+        <ng-container *ngIf="cell.isCurrentMonth">
+          <span class="date-num">{{ cell.date }}</span>
+          
+          <div class="indicators">
+            <div class="badge income" *ngIf="cell.data && cell.data.totalIncome > 0">
+              <span class="dot green-dot"></span>
+              +{{ cell.data.totalIncome | currency:'INR':'symbol':'1.0-0' }}
+            </div>
+            
+            <div class="badge expense" *ngIf="cell.data && cell.data.totalExpense > 0">
+              <span class="dot red-dot"></span>
+              -{{ cell.data.totalExpense | currency:'INR':'symbol':'1.0-0' }}
+            </div>
+          </div>
+        </ng-container>
+
+      </div>
+    </div>
+
+  </div>
+</div>
